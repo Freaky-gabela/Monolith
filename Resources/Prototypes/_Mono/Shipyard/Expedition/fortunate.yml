@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Rubeebeebee
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Author Info
 # GitHub: Rubeebeebee
 # Discord: rubeebee
@@ -13,10 +17,10 @@
   category: Medium
   group: Expedition
   requiredCompanies:
-  - DrakeBlackArmsUSA
+  - DrakeBlackArmsUSA # Exodus: require Drake Black Arms USA
   access: Mercenary
-  shuttlePath: /SharedMaps/_Exodus/Shuttles/Expedition/FortunaUNSA.yml
-  addComponents:
+  shuttlePath: /SharedMaps/_Exodus/Shuttles/Expedition/FortunaUNSA.yml # Exodus: remapped shuttle path
+  addComponents: # Exodus: faction-owned shuttle target filtering
   - type: NpcFactionMember # Exodus NanoTrasen faction
     factions:
     - NanoTrasen
@@ -30,7 +34,7 @@
 - type: gameMap
   id: Fortunate
   mapName: 'Фортуна' # Ru-Localization
-  mapPath: /SharedMaps/_Exodus/Shuttles/Expedition/FortunaUNSA.yml
+  mapPath: /SharedMaps/_Exodus/Shuttles/Expedition/FortunaUNSA.yml # Exodus: remapped map path
   minPlayers: 0
   stations:
     Fortunate:

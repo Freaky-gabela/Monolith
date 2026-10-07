@@ -11,7 +11,6 @@ bulk-mining-refinery-ui-gas-unlimited = {$stored} моль
 bulk-mining-refinery-ui-pressure = Давление в газовом буфере: {$pressure} кПа
 bulk-mining-refinery-ui-corrosion = [color=orange]Газ накапливается и разъедает переработчик. Проверьте отвод![/color]
 bulk-mining-refinery-ui-critical = [color=red]Опасность взрыва! Критический запас: {$limit} моль.[/color]
-bulk-mining-refinery-ui-port-hint = Осмотрите переработчик (Shift + ЛКМ), чтобы увидеть газовый выход. Нужны бронированные трубы.
 stack-bulk-mining-pipe = рудопровод
 bulk-mining-refinery-exhaust = Отработанный газ: {$moles} моль, {$pressure} кПа.
 bulk-mining-refinery-exhaust-warning = [color=orange]Газ накапливается! Длительный застой разъедает переработчик, переполнение вызывает взрыв. Проверьте бронированные трубы и выбрасыватель в космосе.[/color]
@@ -43,4 +42,4 @@ ent-BulkMiningPipeStack1 = катушка рудопровода
 
 bulk-mining-refinery-ui-consortium = Консорциум
 bulk-mining-refinery-ui-consortium-alone = Не связана с другими кораблями. Связь настраивается в консоли буровых лазеров.
-bulk-mining-refinery-ui-consortium-linked = Кораблей в сети: {$count}. Переработка [color=#6FE3C0]+{$percent}%[/color], выход металла [color=#F2C66F]+{$percent}%[/color].
+bulk-mining-refinery-ui-consortium-linked = Кораблей в сети: {$count}. Выход металла [color=#F2C66F]+{$percent}%[/color].

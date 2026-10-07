@@ -1,3 +1,4 @@
+using System.Numerics;
 using Content.Client.Materials;
 using Content.Client.Message;
 using Content.Shared._Exodus.Mining.Pipes;
@@ -30,6 +31,23 @@ public sealed partial class MiningRefineryStorageControl : BoxContainer
             UpdateReadings(refinery);
     }
 
+    /// <summary>
+    /// A scroll container reports no size of its own, so keep the column as wide as the widest reading
+    /// instead of letting the lathe squeeze it and clip the text.
+    /// </summary>
+    protected override Vector2 MeasureOverride(Vector2 availableSize)
+    {
+        var size = base.MeasureOverride(availableSize);
+        var scrollBar = 0f;
+        foreach (var child in Scroll.Children)
+        {
+            if (child is VScrollBar bar)
+                scrollBar = bar.DesiredSize.X;
+        }
+
+        return size with { X = MathF.Max(size.X, Readings.DesiredSize.X + scrollBar) };
+    }
+
     public void UpdateReadings(MiningRefineryComponent refinery)
     {
         var state = refinery.StorageState;
@@ -52,6 +70,19 @@ public sealed partial class MiningRefineryStorageControl : BoxContainer
         else
         {
             UnlimitedSlurry.Text = Loc.GetString("bulk-mining-refinery-ui-slurry-unlimited", ("stored", stored));
+        }
+
+        EfficiencyPanel.Visible = refinery.MaxFullnessDiscount > 0 || state.FilterCapacity > 0;
+        if (EfficiencyPanel.Visible)
+        {
+            LocalReserve.SetMarkup(Loc.GetString("bulk-mining-refinery-ui-local-reserve",
+                ("stored", Math.Round(state.LocalSlurryStored / (double)unitVolume, 1)),
+                ("capacity", Math.Round((state.LocalSlurryCapacity ?? 0) / (double)unitVolume, 1))));
+            FullnessBonus.SetMarkup(Loc.GetString("bulk-mining-refinery-ui-fullness-discount",
+                ("percent", Math.Round(state.FullnessDiscount * 100, 1))));
+            FilterBonus.SetMarkup(Loc.GetString("bulk-mining-refinery-ui-filters",
+                ("installed", state.InstalledFilters), ("capacity", state.FilterCapacity),
+                ("active", state.ActiveFilters), ("percent", Math.Round(state.FilterDiscount * 100, 1))));
         }
 
         GasName.Text = Loc.GetString("bulk-mining-refinery-ui-gas", ("gas", Atmospherics.GasNames[refinery.ExhaustGas]));

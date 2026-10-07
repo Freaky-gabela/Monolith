@@ -90,7 +90,7 @@
   activationMessage: genetics-feeling-cold
   name: genetics-gene-cold
   description: genetics-gene-cold-desc
-  instability: 15
+  instability: 25
   modifiers:
     coldImmunity: true
     lowPressureImmunity: true
@@ -100,7 +100,7 @@
   activationMessage: genetics-feeling-heat
   name: genetics-gene-heat
   description: genetics-gene-heat-desc
-  instability: 15
+  instability: 25
   modifiers:
     heatImmunity: true
     highPressureImmunity: true
@@ -143,6 +143,20 @@
   modifiers:
     abilities: NightVision
   actions: [ActionGeneticNightVision]
+
+- type: geneticMutation
+  id: GeneticThermalVision
+  name: genetics-gene-thermal-vision
+  description: genetics-gene-thermal-vision-desc
+  activationMessage: genetics-feeling-thermal-vision
+  instability: 30
+  components:
+  - type: ThermalVision
+    pulseTime: 3
+    isEquipment: false
+    toggleAction: ActionGeneticThermalVision
+    activateSound: null
+    deactivateSound: null
 
 - type: geneticMutation
   id: GeneticClotting
@@ -209,6 +223,13 @@
   modifiers:
     abilities: Web
   actions: [ActionGeneticWeb]
+  components:
+  - type: IgnoreSpiderWeb
+  - type: Sericulture
+    action: ActionSericulture
+    productionLength: 2
+    entityProduced: MaterialWebSilk1
+    hungerCost: 4
 
 - type: geneticMutation
   id: GeneticFireBreath

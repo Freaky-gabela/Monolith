@@ -1,3 +1,4 @@
+using Content.Shared._Exodus.Virology.Behaviors;
 using Content.Shared._Shitmed.Targeting;
 // Shitmed Change
 using Content.Shared.Body.Systems;
@@ -172,7 +173,8 @@ namespace Content.Shared.Damage
         public enum DamageOriginFlag
         {
             Explosion, // flag set by ExplosionSystem.Processing
-            Barotrauma // flag set by BarotraumaSystem
+            Barotrauma, // flag set by BarotraumaSystem
+            Irradiation, // Exodus: distinguish exposure from direct Radiation damage.
         }
 
         /// <summary>
@@ -234,7 +236,7 @@ namespace Content.Shared.Damage
                         DamageSpecifier.PenetrateArmor(modifierSet, armorPenetration)); // Goob edit
                 }
 
-                var ev = new DamageModifyEvent(damage, origin, armorPenetration, targetPart, tool); // Shitmed Change
+                var ev = new DamageModifyEvent(damage, origin, armorPenetration, targetPart, tool, originFlag); // Shitmed Change // Exodus: preserve the damage origin through resistance callbacks.
                 RaiseLocalEvent(uid.Value, ev);
                 damage = ev.Damage;
 
@@ -396,6 +398,11 @@ namespace Content.Shared.Damage
 
         private void OnIrradiated(EntityUid uid, DamageableComponent component, OnIrradiatedEvent args)
         {
+            // Exodus: radiophasia symptome tweak begin
+            if (TryComp<VirusRadiophasiaComponent>(uid, out var radiophasia)
+                && radiophasia.RadImmunity)
+                return;
+            // Exodus: radiophasia symptome tweak end
             var damageValue = FixedPoint2.New(args.TotalRads);
 
             // Radiation should really just be a damage group instead of a list of types.
@@ -405,7 +412,24 @@ namespace Content.Shared.Damage
                 damage.DamageDict.Add(typeId, damageValue);
             }
 
-            TryChangeDamage(uid, damage, interruptsDoAfters: false, origin: args.Origin);
+            // Exodus-begin: notify radiation reactions only about damage that passed protection.
+            var applied = TryChangeDamage(uid, damage, interruptsDoAfters: false, origin: args.Origin,
+                originFlag: DamageOriginFlag.Irradiation); // Exodus: irradiation already has its own metabolism event.
+            if (!_netMan.IsServer || applied == null || TerminatingOrDeleted(uid))
+                return;
+
+            var received = FixedPoint2.Zero;
+            foreach (var amount in applied.DamageDict.Values)
+            {
+                if (amount > FixedPoint2.Zero)
+                    received += amount;
+            }
+            if (received > FixedPoint2.Zero)
+            {
+                var ev = new Content.Shared._Exodus.Radiation.RadiationDamageReceivedEvent(received);
+                RaiseLocalEvent(uid, ref ev);
+            }
+            // Exodus-end
         }
 
         private void OnRejuvenate(EntityUid uid, DamageableComponent component, RejuvenateEvent args)
@@ -512,8 +536,10 @@ namespace Content.Shared.Damage
         public float ArmorPenetration; // Goobstation
         public readonly TargetBodyPart? TargetPart; // Shitmed Change
         public EntityUid? Tool;
+        public readonly DamageOriginFlag? OriginFlag; // Exodus: preserve the source category separately from its damage types.
 
-        public DamageModifyEvent(DamageSpecifier damage, EntityUid? origin = null, float armorPenetration = 0, TargetBodyPart? targetPart = null, EntityUid? tool = null) // Shitmed Change
+        public DamageModifyEvent(DamageSpecifier damage, EntityUid? origin = null, float armorPenetration = 0, TargetBodyPart? targetPart = null, EntityUid? tool = null,
+            DamageOriginFlag? originFlag = null) // Shitmed Change // Exodus: optional context preserves existing callers.
         {
             OriginalDamage = damage;
             Damage = damage;
@@ -521,6 +547,7 @@ namespace Content.Shared.Damage
             TargetPart = targetPart; // Shitmed Change
             ArmorPenetration = armorPenetration; // Goobstation
             Tool = tool;
+            OriginFlag = originFlag; // Exodus: source-aware damage modifiers.
         }
     }
 

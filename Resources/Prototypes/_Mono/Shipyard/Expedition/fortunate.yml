@@ -13,7 +13,7 @@
   parent: BaseVessel
   name: Фортуна # Ru-Localization
   description: Будучи частым шаттлом в флотилии Всемирных Штатов Америки, Фортуна - это штурмовой шаттл, оснащённый лобовой бронёй и орудиями для пробивания корпусов. В конструкцию входит абордажный порт, позволяющий доставлять солдат к пробитому корпусу врага для подавления и уничтожения угрозы в ближнем бою. # Ru-Localization
-  price: 184000 # Exodus: cover the remapped shuttle's appraised value.
+  price: 200000 # Exodus: appraised minimum + 5% for randomized contents, rounded up to 100.
   category: Medium
   group: Expedition
   requiredCompanies:

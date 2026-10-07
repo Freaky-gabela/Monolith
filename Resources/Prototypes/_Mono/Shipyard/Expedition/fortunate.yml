@@ -28,8 +28,9 @@
   class:
   - Expedition
   - Pursuit
+  - Mercenary
   engine:
-  - Uranium
+  - Plasma
 
 - type: gameMap
   id: Fortunate
